@@ -2,22 +2,25 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
 import * as articleAction from '../../actions/article'
-import { Table, Button, Layout, Modal } from 'antd';
-const { Header, Footer, Content } = Layout;
 import Panel from '../show/panel'
 import MDEditor from '../editor/editor'
 import { getTimeStr } from '../../base/commonFunc';
+import PhotoWall from '../photo-wall';
+import { Table, Button, Layout, Modal } from 'antd';
+const { Header, Footer, Content } = Layout;
+
 const NEWARTICLE = { title: '', content: '', author: '', createTime: Date.now(), updateTime: Date.now(), _id: '', tags: [] };
 class MainPage extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this.state = { articles: [], checkArticle: {}, visible: false, isEdit: false, isNew: false };
+        this.state = { articles: [], checkArticle: {}, visible: false, isEdit: false, isNew: false, isShowPhotos: false };
         this.checkArticle = this.checkArticle.bind(this);
         this.deleteArticle = this.deleteArticle.bind(this);
         this.editArticle = this.editArticle.bind(this);
         this.newArticle = this.newArticle.bind(this);
         this.goBack = this.goBack.bind(this);
+        this.handleBack = this.handleBack.bind(this);
     }
 
     componentDidMount() {
@@ -87,24 +90,36 @@ class MainPage extends Component {
         this.setState({ isEdit: true, checkArticle: NEWARTICLE, isNew: true });
     }
 
-    goBack(isEdit){
-        this.setState({isEdit});
+    goBack(isEdit) {
+        this.setState({ isEdit });
+    }
+
+    showPhotos() {
+        this.setState({ isShowPhotos: true });
+    }
+
+    handleBack(){
+        this.setState({isShowPhotos:false});
     }
 
     render() {
-        var { isEdit, visible, articles, checkArticle, isNew } = this.state;
+        var { isEdit, visible, articles, checkArticle, isNew, isShowPhotos } = this.state;
         var { statusCode, text } = this.props.article;
+        var photoWall = '';
         var editor = <MDEditor
             article={checkArticle}
             actions={this.props.actions}
-            exteraData={{ isNew, isEdit, statusCode, text }} 
-            goBack={this.goBack}/>
+            exteraData={{ isNew, isEdit, statusCode, text }}
+            goBack={this.goBack} />
         var mainView = <Layout>
             <Header style={{ backgroundColor: '#1DA57A', textAlign: 'center' }}>
                 <h1 style={{ color: 'white', display: 'inline-block' }}>Welcome To MyBlog</h1>
                 <Button style={{ float: 'right', marginRight: 10, marginTop: 10 }}
                     type="primary"
                     onClick={() => this.newArticle()}>新建</Button>
+                <Button style={{ float: 'right', marginRight: 10, marginTop: 10 }}
+                    type="primary"
+                    onClick={() => this.showPhotos()}>照片墙</Button>
             </Header>
             <Content>
                 <Table rowKey={record => record._id} columns={this.getCloumn()} dataSource={articles} />
@@ -112,8 +127,14 @@ class MainPage extends Component {
             <Footer style={{ textAlign: 'center' }}>by Peter</Footer>
         </Layout>
         var panelView = <Panel article={checkArticle} />;
+        if (isShowPhotos) {
+            editor = '';
+            mainView = '';
+            photoWall = <PhotoWall handleBack={this.handleBack} photos={[[{ url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }, { url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }, { url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }, { url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }]]} />
+        }
         return <div>
             {isEdit ? editor : mainView}
+            {photoWall}
             <Modal
                 width={1000}
                 title={checkArticle.title}

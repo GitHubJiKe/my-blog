@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-var ReactMarkdown = require('react-markdown');
 import { Button, Tag } from 'antd';
 import { getTimeStr } from '../../base/commonFunc';
 import { COLORS,myStyle } from '../../base/constant';
+var ReactMarkdown = require('react-markdown');
+
 
 
 
