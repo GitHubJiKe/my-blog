@@ -19,7 +19,7 @@ new WebpackDevServer(webpack(config), {
   stats: {
     colors: true
   }
-}).listen(4000, DEV_HOST, function (err) {
+}).listen(2223, DEV_HOST, function (err) {
   if (err) console.log(err);
-  console.log('Listening at '+DEV_HOST+':4000');
+  console.log('Listening at '+DEV_HOST+':2223');
 });

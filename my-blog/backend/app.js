@@ -8,15 +8,18 @@ const json = require('koa-json');
 const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser')();
 const logger = require('koa-logger');
+const multer = require('koa-multer');
 const routers = require('./routes/index');
 const mongoose = require('mongoose');
 const config = require('./config/config');
-
 
 // middlewares
 app.use(convert(bodyparser));
 app.use(convert(json()));
 app.use(convert(logger()));
+// app.use(function(){
+//   return multer({ dest: 'upload_files/' });
+// });
 app.use(require('koa-static')(__dirname + '/public'));
 
 app.use(views(__dirname + '/views', {
@@ -30,6 +33,7 @@ app.use(async (ctx, next) => {
   const ms = new Date() - start;
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
 });
+
 
 app.use(routers.routes(), routers.allowedMethods());
 

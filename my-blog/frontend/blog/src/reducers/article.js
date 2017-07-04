@@ -2,14 +2,17 @@ import {
     ADD_ARTICLE,
     REMOVE_ARTICLE,
     GET_ALL_ARTICLES,
-    UPDATE_ARTICLE
+    UPDATE_ARTICLE,
+    UPLOAD_AVATAR
 } from '../base/constant'
 
 
 const initState = {
-    data:[],
-    statusCode:0,
-    text:''
+    data: [],
+    statusCode: 0,
+    text: '',
+    avatar: '',
+    photos:[]
 };
 
 export default function article(state = initState, action) {
@@ -18,10 +21,11 @@ export default function article(state = initState, action) {
         case REMOVE_ARTICLE:
         case GET_ALL_ARTICLES:
         case UPDATE_ARTICLE:
-            return {...state,...action.data};
+        case UPLOAD_AVATAR:
+            return { ...state, ...action.data };
         case "NET_ERROR":
-            return {...state};
+            return { ...state };
         default:
-            return {...state};
+            return { ...state };
     }
 }

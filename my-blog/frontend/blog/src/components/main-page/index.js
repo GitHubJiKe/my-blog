@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
 import * as articleAction from '../../actions/article'
+import { Table, Button, Layout, Modal, Avatar, Tooltip, message } from 'antd';
+const { Header, Footer, Content } = Layout;
 import Panel from '../show/panel'
 import MDEditor from '../editor/editor'
 import { getTimeStr } from '../../base/commonFunc';
@@ -21,6 +23,7 @@ class MainPage extends Component {
         this.newArticle = this.newArticle.bind(this);
         this.goBack = this.goBack.bind(this);
         this.handleBack = this.handleBack.bind(this);
+        this.onFileChange = this.onFileChange.bind(this);
     }
 
     componentDidMount() {
@@ -94,25 +97,53 @@ class MainPage extends Component {
         this.setState({ isEdit });
     }
 
+
     showPhotos() {
         this.setState({ isShowPhotos: true });
     }
 
-    handleBack(){
-        this.setState({isShowPhotos:false});
+    handleBack() {
+        this.setState({ isShowPhotos: false });
+    }
+
+
+    onFileChange(e) {
+        var file = e.target.files[0];
+        var { type, size } = file;
+        if ((type == 'image/png' || type == 'image/gif' || type == 'image/jpeg' || type == 'image/bmp')) {
+            if (file.size < (50 * 1024 * 1024)) {
+                this.props.actions.uploadAvatar(file);
+            } else {
+                message.warning('文件过大');
+            }
+        } else {
+            message.warning('文件类型有误');
+        }
+        e.target.value = '';
     }
 
     render() {
-        var { isEdit, visible, articles, checkArticle, isNew, isShowPhotos } = this.state;
-        var { statusCode, text } = this.props.article;
-        var photoWall = '';
+        var { isEdit, visible, articles, checkArticle, isNew } = this.state;
+        var { statusCode, text, avatar } = this.props.article;
         var editor = <MDEditor
             article={checkArticle}
             actions={this.props.actions}
             exteraData={{ isNew, isEdit, statusCode, text }}
             goBack={this.goBack} />
+        var avatarView = avatar ? <Avatar
+            style={{ display: 'inline-block', float: 'left', marginTop: 12 }}
+            size="large"
+            icon="user"
+            src={avatar}
+            onClick={() => { document.getElementById('avatarUploader').click() }} /> :
+            <Avatar
+                style={{ display: 'inline-block', float: 'left', marginTop: 12 }}
+                size="large"
+                icon="user"
+                onClick={() => { document.getElementById('avatarUploader').click() }} />
         var mainView = <Layout>
             <Header style={{ backgroundColor: '#1DA57A', textAlign: 'center' }}>
+                {avatarView}
                 <h1 style={{ color: 'white', display: 'inline-block' }}>Welcome To MyBlog</h1>
                 <Button style={{ float: 'right', marginRight: 10, marginTop: 10 }}
                     type="primary"
@@ -124,7 +155,15 @@ class MainPage extends Component {
             <Content>
                 <Table rowKey={record => record._id} columns={this.getCloumn()} dataSource={articles} />
             </Content>
-            <Footer style={{ textAlign: 'center' }}>by Peter</Footer>
+            <Footer style={{ textAlign: 'center' }}>by Peter Yuan</Footer>
+            <input
+                style={{ visibility: 'hidden', width: 0, height: 0 }}
+                type="file"
+                multiple="multiple"
+                id="avatarUploader"
+                size="1"
+                accept="image/*"
+                onChange={this.onFileChange} />
         </Layout>
         var panelView = <Panel article={checkArticle} />;
         if (isShowPhotos) {

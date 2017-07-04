@@ -6,7 +6,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 
 var DEV_HOST = process.env.DEV_HOST ? process.env.DEV_HOST : 'localhost';
-var __API_HOST__ = 'http://localhost:2223';//方便去访问别人的主机调试代码
+var __API_HOST__ = 'localhost:2223';//方便去访问别人的主机调试代码
 var __PUBLIC_PATH__ = '';//for local
 if (process.env.API_HOST) {
   __API_HOST__ = 'http://' + process.env.API_HOST;
@@ -20,7 +20,7 @@ var webpack = require('webpack');
 module.exports = {
   devtool: 'eval',
   entry: [
-    'webpack-dev-server/client?http://' + DEV_HOST + ':4000',
+    'webpack-dev-server/client?http://' + DEV_HOST + ':2223',
     'webpack/hot/only-dev-server',
     './src/index.js'
   ],
