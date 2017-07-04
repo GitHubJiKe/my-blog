@@ -2,10 +2,11 @@ import {
     ADD_ARTICLE,
     REMOVE_ARTICLE,
     GET_ALL_ARTICLES,
-    UPDATE_ARTICLE
+    UPDATE_ARTICLE,
+    UPLOAD_AVATAR
 } from '../base/constant'
 import { message } from 'antd';
-import { doGet, doPost, doDelete } from '../base/fetchApi'
+import { doGet, doPost, doDelete, uploadFile } from '../base/fetchApi'
 
 export const addArticle = (Article) => {
     return function (dispatch) {
@@ -60,6 +61,20 @@ export const updateArticle = (id, update) => {
                     data: result
                 });
             }
-        }, dispatch);
+        });
+    }
+}
+
+export const uploadAvatar = (file) => {
+    return (dispatch)=>{
+        uploadFile('/uploadAvatar','avatar',file,(result)=>{
+            if (result) {
+                message.success(result.text);
+                dispatch({
+                    type: UPLOAD_AVATAR,
+                    data: result
+                });
+            }
+        })
     }
 }

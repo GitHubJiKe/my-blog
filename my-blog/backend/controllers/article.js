@@ -1,7 +1,10 @@
 const Article = require('./../models/article');
+const User = require('./../models/user');
+
 
 module.exports = {
     async addOne(ctx) {
+        console.log('A');
         let body = ctx.request.body;
         let result = {
             statusCode: 200,
@@ -15,7 +18,7 @@ module.exports = {
         } else {
             body.createTime = Date.now();
             let newArticle = await Article.create(body);
-            if(!newArticle){
+            if (!newArticle) {
                 result.statusCode = 300;
                 result.text = '添加失败';
             }
@@ -66,18 +69,49 @@ module.exports = {
         let result = {
             statusCode: 200,
             text: '获取成功',
-            data: []
+            data: [],
+            avatar: ''
         };
         let articles = await Article.find({});
+        let user = await User.findOne({ username: 'Peter' });
         if (!articles) {
             result.statusCode = 300;
             result.text = '获取失败,请重试';
         }
         if (articles) result.data = articles;
+        if (user) result.avatar = user.avatar;
         ctx.body = result;
     },
 
     async deleteMany(ctx) {
 
+    },
+
+    async uploadAvatar(ctx) {
+        var result = {
+            statusCode: 200,
+            text: '上传成功',
+            avatar: ''
+        }
+        result.avatar = '/images/' + ctx.req.file.filename;
+        await User.update({'username':'Peter'},{avatar:result.avatar});
+        ctx.body = result;
+    },
+    // { fieldname: 'photos',
+    // originalname: 'WechatIMG32.jpeg',
+    // encoding: '7bit',
+    // mimetype: 'image/jpeg',
+    // destination: './public/images/',
+    // filename: '4b7c1cf7ec38f2f65deb6ec2f36e08ae',
+    // path: 'public/images/4b7c1cf7ec38f2f65deb6ec2f36e08ae',
+    // size: 176823 }
+    async uploadPhotos(ctx) {
+        var result = {
+            statusCode: 200,
+            text: '上传成功',
+            photos: []
+        }
+        ctx.req.files.forEach(v => result.photos.push('/images/' + v.filename));
+        ctx.body = result;
     }
 }

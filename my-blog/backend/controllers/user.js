@@ -1,7 +1,7 @@
 const User = require('./../models/user');
 
 module.exports = {
-    async signUp (ctx) {
+    async signUp(ctx) {
 
         let result = {
             success: false,
@@ -13,9 +13,9 @@ module.exports = {
             result.message = '请填写用户名和密码';
             ctx.body = result;
         } else {
-            let user = await User.findOne({username});
+            let user = await User.findOne({ username });
             //检查用户名是否已存在
-            if(!user) {
+            if (!user) {
                 const newUser = new User({
                     username: username,
                     password: password,
@@ -24,7 +24,7 @@ module.exports = {
 
                 const doc = await newUser.save();
                 if (!doc.errors) {
-                    ctx.body = {success: true, message: '注册成功'}
+                    ctx.body = { success: true, message: '注册成功' }
                 } else {
                     ctx.body = result;
                 }
@@ -37,35 +37,39 @@ module.exports = {
                 //     }
                 // })
             } else {
-                ctx.body = { success: false, message: '用户名已存在'};
+                ctx.body = { success: false, message: '用户名已存在' };
             }
         }
     },
 
-    async signIn (ctx) {
+    async signIn(ctx) {
         let result = {
-            success: false,
-            message: '用户不存在'
+            statucCode: 200,
+            text: '登录成功'
         };
         //从请求体中获得参数
-        const { username,  password } = ctx.request.body;
+        const { username, password } = ctx.request.body;
         //检查数据库中是否存在该用户名
-        await User.findOne({
-            username
-        }, (err, user) => {
-            if (err) {
-                throw err;
-            }
-            if (!user) {
-                ctx.body = result;
-            } else {
-                //判断密码是否正确
-                if (password === user.password) {
-                    ctx.body = {success: true, message: '登入成功'}
-                } else {
-                    ctx.body = {success: false, message: '密码错误'}
-                }
-            }
-        })
+        let user = await User.findOne({ username, password });
+
+        if (!user) {
+            result.statucCode = 300;
+            result.text = '用户名或密码错误';
+        }
+        ctx.body = result;
+    },
+
+    async addOne(ctx) {
+        var result = {
+            statusCode: 200,
+            text: '上传成功',
+            avatar: ''
+        }
+        result.avatar = '/images/' + ctx.req.file.filename;
+        let user = await User.findOne({ username: 'Peter' });
+        if (!user) new User({ username: 'Peter', password: '123', avatar: result.avatar }).save();
+        else await User.update({ username: 'Peter' }, { avatar: result.avatar });
+
+        ctx.body = result;
     }
 }

@@ -40,6 +40,7 @@
     "start:dev": "APP_ENV=dev node dev-server.js --verbose --display-error-details ",
     "start": "react-scripts start",
     "build": "webpack --config webpack.config.js",
+    "deploy": "webpack --config webpack.config.deploy.js",
     "dev": "webpack-dev-server --devtool eval --progress --colors --hot --content-base build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

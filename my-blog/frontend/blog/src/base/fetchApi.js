@@ -16,6 +16,9 @@ const POST_OPTION = {
 const DELETE_OPTION = {
     method: 'DELETE'
 }
+const UPLOAD_OPTION = {
+    method: 'POST',
+}
 
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
@@ -52,6 +55,29 @@ export function doPost(url, data, cb) {
 
 export function doDelete(url, cb) {
     fetch(url, DELETE_OPTION)
+        .then(status)
+        .then(json)
+        .then((response) => cb(response))
+        .catch((ex) => dealWithErroe(ex));
+}
+
+export function uploadFileWithData(url, file, postData, cb) {
+    var data = new FormData();
+    data.append('file', file);
+    data.append('data', JSON.stringify(postData));
+    POST_OPTION.body = data;
+    fetch(url, POST_OPTION)
+        .then(status)
+        .then(json)
+        .then((response) => cb(response))
+        .catch((ex) => dealWithErroe(ex));
+}
+
+export function uploadFile(url, filedname, file, cb) {
+    var data = new FormData();
+    data.append(filedname, file);
+    UPLOAD_OPTION.body = data;
+    fetch(url, UPLOAD_OPTION)
         .then(status)
         .then(json)
         .then((response) => cb(response))

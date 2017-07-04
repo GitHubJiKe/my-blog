@@ -11,15 +11,14 @@ const UserSchema = new Schema({
         type: String,
         require: true
     },
-    email: {
+    avatar: {
         type: String,
     }
 });
 
-
-
+mongoose.Promise = global.Promise;
+var db = mongoose.connect(config.database);
 var User = mongoose.model('users',UserSchema);
-
 module.exports = User;
 
 
