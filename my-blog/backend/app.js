@@ -12,6 +12,7 @@ const multer = require('koa-multer');
 const routers = require('./routes/index');
 const mongoose = require('mongoose');
 const config = require('./config/config');
+const hbs = require('koa-hbs');
 
 // middlewares
 app.use(convert(bodyparser));
@@ -21,8 +22,13 @@ app.use(convert(logger()));
 //   return multer({ dest: 'upload_files/' });
 // });
 app.use(require('koa-static')(__dirname + '/public'));
+// app.use(hbs.middleware({
+//   viewPath: __dirname + '/views',
+//   extname:'html'
+// }));
 
 app.use(views(__dirname + '/views', {
+  map:{html:'handlebars'},
   extension: 'html'
 }));
 

@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-
+var appVersion = require('../../backend/config/appVersion');
 
 
 
@@ -21,7 +21,7 @@ module.exports = {
   devtool: false,
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js',
+    filename: `[name]-${appVersion.version}.js`,
     publicPath: __PUBLIC_PATH__,
     path: require('path').join(__dirname, '../../backend/public/'),
   },
@@ -38,10 +38,17 @@ module.exports = {
         loader: 'file-loader?limit=50000&name=[path][name].[ext]'
       },
       //处理css文件的loader配置
-      { test: /\.css$/, loader: 'style-loader!css-loader' }
+      { test: /\.css$/, loader: 'style-loader!css-loader' },
+      { test: /\.html$/, loader: "handlebars" }
     ]
   }, plugins: [
-    new HtmlWebpackPlugin(),
+    // new HtmlWebpackPlugin({  // 自动产生一个html文件,但是我们现在已经用不到它,放在这里仅仅为了看看运作方式
+    //   filename: 'index.html',
+    //   template: './templateHtml/index.html',
+    //   title: 'MyBlog',
+    //   describe: 'Welcome To MyBlog',
+    //   inject: 'body'
+    // }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
@@ -51,9 +58,10 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
       __APP_ENV__: JSON.stringify('production'),
-      __STATE_VER__: JSON.stringify('4'),
+      __STATE_VER__: JSON.stringify(appVersion.version),//状态树版本跟着app版本走
       __PUBLIC_PATH__: JSON.stringify(__PUBLIC_PATH__),
       __API_HOST__: JSON.stringify(__API_HOST__)
-    })
+    }),
+    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js' })
   ]
 };

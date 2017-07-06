@@ -43,7 +43,7 @@ export default class PhotoWall extends Component {
                 <Upload />
             </Header>
             {this.getViews()}
-            <Dragger name='file' multiple={true} showUploadList={false} onChange={this._handleChange} action={'/uploadPhotos'}>
+            <Dragger name='photos' multiple={true} showUploadList={true} onChange={this._handleChange} action={'/uploadPhotos'}>
                 <p className="ant-upload-drag-icon">
                     <Icon type="inbox" />
                 </p>

@@ -1,5 +1,6 @@
 const Article = require('./../models/article');
 const User = require('./../models/user');
+const Photo = require('./../models/photo');
 
 
 module.exports = {
@@ -94,7 +95,7 @@ module.exports = {
             avatar: ''
         }
         result.avatar = '/images/' + ctx.req.file.filename;
-        await User.update({'username':'Peter'},{avatar:result.avatar});
+        await User.update({ 'username': 'Peter' }, { avatar: result.avatar });
         ctx.body = result;
     },
     // { fieldname: 'photos',
@@ -111,7 +112,16 @@ module.exports = {
             text: '上传成功',
             photos: []
         }
-        ctx.req.files.forEach(v => result.photos.push('/images/' + v.filename));
-        ctx.body = result;
+        var photos = [];
+        ctx.req.files.forEach(v =>{
+            let url = `/images/${v.filename}`;
+            photos.push({url:url,uploadTime:Date.now()});
+            result.photos.push(url);
+        });
+        await Photo.insertMany(photos).then((res)=>{
+            if(res) result.photos = res;
+            ctx.body = result;
+        });
+        
     }
 }

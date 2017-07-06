@@ -8,9 +8,6 @@ import Panel from '../show/panel'
 import MDEditor from '../editor/editor'
 import { getTimeStr } from '../../base/commonFunc';
 import PhotoWall from '../photo-wall';
-import { Table, Button, Layout, Modal } from 'antd';
-const { Header, Footer, Content } = Layout;
-
 const NEWARTICLE = { title: '', content: '', author: '', createTime: Date.now(), updateTime: Date.now(), _id: '', tags: [] };
 class MainPage extends Component {
 
@@ -123,7 +120,7 @@ class MainPage extends Component {
     }
 
     render() {
-        var { isEdit, visible, articles, checkArticle, isNew } = this.state;
+        var { isEdit, visible, articles, checkArticle, isNew ,isShowPhotos} = this.state;
         var { statusCode, text, avatar } = this.props.article;
         var editor = <MDEditor
             article={checkArticle}
@@ -166,6 +163,7 @@ class MainPage extends Component {
                 onChange={this.onFileChange} />
         </Layout>
         var panelView = <Panel article={checkArticle} />;
+        let photoWall;
         if (isShowPhotos) {
             editor = '';
             mainView = '';
