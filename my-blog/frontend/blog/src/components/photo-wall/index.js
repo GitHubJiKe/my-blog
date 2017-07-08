@@ -1,54 +1,84 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Row, Col, Button, Layout, Upload ,Icon,message} from 'antd';
-const { Header } = Layout;
-const Dragger = Upload.Dragger;
-export default class PhotoWall extends Component {
+import * as photoAction from '../../actions/photo';
+import { Button, Layout, Upload, Icon, message, Affix } from 'antd';
+import './style.css';
+const { Header, Content } = Layout;
+
+
+class PhotoWall extends Component {
     constructor(props, context) {
         super(props, context);
-        this._handleChange = this._handleChange.bind(this);
         this.getViews = this.getViews.bind(this);
+        this.onFileChange = this.onFileChange.bind(this);
     }
 
     getViews() {
-        return this.props.photos.map((v, idx) =>
-            <Row type="flex" key={idx}>
-                {v[0] ? <Col span={6} order={1}><img src={v[0].url} /></Col> : ''}
-                {v[1] ? <Col span={6} order={2}><img src={v[1].url} /></Col> : ''}
-                {v[2] ? <Col span={6} order={3}><img src={v[2].url} /></Col> : ''}
-                {v[3] ? <Col span={6} order={4}><img src={v[3].url} /></Col> : ''}
-            </Row>
-        );
+        return this.props.photo.photos.map((v, idx) => <img className='img' key={v._id} src={v.url} />);
     }
-    _handleChange() {
-        // const status = info.file.status;
-        // if (status !== 'uploading') {
-        //     console.log(info.file, info.fileList);
-        // }
-        // if (status === 'done') {
-        //     message.success(`${info.file.name} file uploaded successfully.`);
-        // } else if (status === 'error') {
-        //     message.error(`${info.file.name} file upload failed.`);
-        // }
+
+    componentDidMount() {
+        this.props.actions.getAllPhotos();
+    }
+
+    componentWillReceiveProps(props) {
+
+    }
+
+    onFileChange(e) {
+        var file = e.target.files[0];
+        var { type, size } = file;
+        if ((type == 'image/png' || type == 'image/gif' || type == 'image/jpeg' || type == 'image/bmp')) {
+            if (file.size < (50 * 1024 * 1024)) {
+                this.props.actions.addPhoto(file);
+            } else {
+                message.warning('文件过大');
+            }
+        } else {
+            message.warning('文件类型有误');
+        }
+        e.target.value = '';
     }
 
     render() {
         return (<div>
-            <Header style={{ backgroundColor: '#1DA57A', textAlign: 'center' }}>
-                <Button
-                    style={{ float: 'left', marginLeft: 10, marginTop: 10, marginBottom: 10 }}
-                    type="primary"
-                    onClick={this.props.handleBack}>返回</Button>
-                <Upload />
-            </Header>
-            {this.getViews()}
-            <Dragger name='photos' multiple={true} showUploadList={true} onChange={this._handleChange} action={'/uploadPhotos'}>
-                <p className="ant-upload-drag-icon">
-                    <Icon type="inbox" />
-                </p>
-                <p className="ant-upload-text">点击或者拖拽图片上传</p>
-            </Dragger>
+            <Layout>
+                <Header style={{ position:'fixed',width:'100%',backgroundColor: '#1DA57A', textAlign: 'center' }}>
+                    <Button
+                        style={{ float: 'left', marginLeft: 10, marginTop: 15, marginBottom: 10 }}
+                        type="primary"
+                        onClick={this.props.handleBack}>返回</Button>
+                    <Affix
+                        style={{ float: 'right'}}
+                        offsetTop={0}
+                        onChange={affixed => console.log(affixed)}>
+                        <Button
+                            type="primary"
+                            onClick={() => document.getElementById('photoUploader').click()}>
+                            点击上传
+                        </Button>
+                    </Affix>
+                </Header>
+                <Content style={{marginTop:70}}>
+                    {this.getViews()}
+                </Content>
+            </Layout>
+            <input
+                style={{ visibility: 'hidden', width: 0, height: 0 }}
+                type="file"
+                multiple="multiple"
+                id="photoUploader"
+                size="12"
+                accept="image/*"
+                onChange={this.onFileChange} />
         </div>);
     }
 }
+
+export default connect(
+    state => ({
+        photo: state.photo
+    }),
+    dispatch => ({ actions: bindActionCreators(photoAction, dispatch) })
+)(PhotoWall)

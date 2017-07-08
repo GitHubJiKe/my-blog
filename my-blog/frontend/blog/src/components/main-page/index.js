@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux';
-import * as articleAction from '../../actions/article'
+import * as articleAction from '../../actions/article';
 import { Table, Button, Layout, Modal, Avatar, Tooltip, message } from 'antd';
-const { Header, Footer, Content } = Layout;
 import Panel from '../show/panel'
 import MDEditor from '../editor/editor'
 import { getTimeStr } from '../../base/commonFunc';
 import PhotoWall from '../photo-wall';
+const { Header, Footer, Content } = Layout;
 const NEWARTICLE = { title: '', content: '', author: '', createTime: Date.now(), updateTime: Date.now(), _id: '', tags: [] };
+
 class MainPage extends Component {
 
     constructor(props, context) {
@@ -167,7 +168,7 @@ class MainPage extends Component {
         if (isShowPhotos) {
             editor = '';
             mainView = '';
-            photoWall = <PhotoWall handleBack={this.handleBack} photos={[[{ url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }, { url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }, { url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }, { url: 'http://img3.imgtn.bdimg.com/it/u=3193006289,3802606706&fm=26&gp=0.jpg' }]]} />
+            photoWall = <PhotoWall handleBack={this.handleBack} />
         }
         return <div>
             {isEdit ? editor : mainView}
@@ -188,7 +189,7 @@ class MainPage extends Component {
 
 export default connect(
     state => ({
-        article: state.default
+        article: state.article
     }),
     dispatch => ({ actions: bindActionCreators(articleAction, dispatch) })
 )(MainPage)

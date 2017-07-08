@@ -4,8 +4,8 @@ import thunk from 'redux-thunk';
 import {createDevTools, persistState} from 'redux-devtools';
 import LogMonitor from 'redux-devtools-log-monitor';
 import DockMonitor from 'redux-devtools-dock-monitor';
-import *as reducers from '../reducers/article';
-
+import *as reducers from '../reducers/index';
+// import {routerReducer} from 'react-router-redux';
 
 const reducer = combineReducers({...reducers});
 
